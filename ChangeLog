@@ -1,0 +1,326 @@
+ChangeLog
+=========
+
+version 1.5.0 (release 2013-12-12 ), csync 0.91.4 required
+  * New owncloud propagator that skips the vio abstraction layer
+  * Add owncloudcmd to replace the ocsync command line tool
+  * Localize Windows installer
+  * Allow to sign in and out
+  * Ask for password if missing
+  * Introduce activity view
+  * Introduce black list for files which could not be synced
+  * Enabling accessbility by shipping accessibility enables on OS X (#736)
+  * Toggle Settings window when clicking on systray icon on Win and KDE (#896)
+  * FolderWizard: Sanitize error detection (#1201)
+  * Set proper enable state of blacklist button after the dialog was opened
+  * Set proper tooltips in blacklist
+  * Translatable error messages for file errors
+  * Add man page for owncloudcmd (#1234)
+  * Don't close setup wizard when the initial sync run is started
+  * Close the sync journal if a folder gets removed (#1252)
+  * Activity: Avoid horizontal scrollbar (#1213)
+  * Fix crash (#1229)
+  * Resize wizard appropriately (#1130)
+  * Fix account identity test (#1231)
+  * Maintain the file type correctly
+  * Display rename-target in sync protocol action column
+  * Let recursive removal also remove the top dir
+  * If item is a directory, remove its contents from the database as well (#1257)
+  * Install headers for owncloudsync library
+  * Fix opening the explorer with a selected file in Windows (#1249)
+  * Add build number into versioning scheme
+  * Windows: Fix rename of temporary files
+  * Windows: Fix move file operation
+
+version 1.4.2 (release 2013-10-18 ), csync 0.90.4 required
+
+  * Do not show the warning icon in the tray (#944)
+  * Fix manual proxy support when switching (#1016)
+  * Add folder column to detailed sync protocol (#1037)
+  * Fix possible endless loop in inotify (#1041)
+  * Do not elide the progress text (#1049)
+  * Fix high CPU load (#1073)
+  * Reconnect if network is unavailable after startup (#1080)
+  * Ensure paused folder stays paused when syncing with more than one folder (#1083)
+  * Don't show desktop notification when the user doesn't want to (#1093)
+  * System tray: Avoid quick flickering up of the ok-icon for the sync prepare state
+  * Progress: Do not show progress if nothing is transmitted
+  * Progress: Show number of deletes.
+
+version 1.4.1 (release 2013-09-24 ), csync 0.90.1 required
+
+  * Translation and documentation fixes.
+  * Fixed error display in settings/status dialog, displays multi 
+    line error messages now correctly.
+  * Wait up to 30 secs before complaining about missing systray
+    Fixes bug #949
+  * Fixed utf8 issues with basic auth authentication, fixes bug #941
+  * Fixed remote folder selector, avoid recursive syncing, fixes bug #962
+  * Handle and display network problems at startup correctly.
+  * Enable and disable the folder watcher during syncs correctly.
+  * Fix setting of thread priority.
+  * Fixed file size display.
+  * Fixed various folder wizard issues, bug #992
+  * Made "Sync started" message optional, fixes bug #934
+  * Fixed shutdown, avoid crashed config on win32, fixes bug #945
+  * Pop up config wizard if no server url is configured, fixes bug #1018
+  * Settings: calculate sidebar width dynamically, fixes bug #1020
+  * Fixed a crash if sync folders were removed, fixes bug #713
+  * Do proper resync after network disconnect, fixes bug #1007
+  * Various minor code fixes
+
+version 1.4.0 (release 2013-09-04 ), csync 0.90.0 required
+
+  * New Scheduler: Only sync when there are actual changes in the server
+  * Add a Settings Dialog, move Proxy Settings there
+  * Transform folder Status Dialog into Account Settings, provide feedback via context menu
+  * Add Bandwidth Control
+  * Add a visual storage/quota indicator (context menu and account settings)
+  * Add progress indication (context menu and account settings)
+  * Introduce a sync history, persisting results across syncs
+  * Move ability to switch to mono icons from a switch to a Settings option
+  * Add "Launch on System Startup" GUI option
+  * Add "Show Desktop Nofications"GUI option (enabled by default)
+    top optionally disable sync notifications
+  * Add Help item, pointing to online reference
+  * Implement graphical selection of remote folders in FolderWizard
+  * Allow custom ignore patterns
+  * Add an editor for ingore patterns
+  * ALlow to flag certain ignore patterns as discardable
+  * Ensure to ship with all valid translations
+  * Progress Dialog now preserves the last syncned items across sync runs
+  * Split Setup Wizard into multiple pages again
+  * Implement "--logfile -" to log to stdout
+  * Add preliminary support for Shibboleth authentication
+  * Linux: Provide more icon sizes
+  * Linux: Do not trigger notifier on ignored files
+  * Windows: Reduce priority of CSync thread
+  * Documentation: Prem. updates to reflect UI changes
+  * Significant code refactorings
+  * Require Qt 4.7
+  * Known issue: Under certain conditions, a file will only get uploaded after up to five minutes
+
+version 1.3.0 (release 2013-06-25 ), csync 0.80.0 required
+
+  * Default proxy port to 8080
+  * Don't lose proxy settings when changing passwords
+  * Support SOCKS5 proxy (useful in combination with ssh   *D)
+  * Propagate proxy changes to csync at runtime
+  * Improve proxy wizard
+  * Display proxy errors
+  * Solved problems with lock files
+  * Warn if for some reason all files are scheduled for removal on either side
+  * Avoid infinite loop if authentication fails in certain cases
+  * Fix reading the password from the config in certain cases
+  * Do not crash when configured sync target disappears
+  * Make --help work on windows
+  * Make sync feedback less ambiguous.
+  * Fix icon tray tooltip sometimes showing repeated content
+  * More use of native directory separators on Windows
+  * Remove journal when reusing a directory that used to have a journal before
+  * Visual clean up of status dialog items
+  * Wizard: When changing the URL or user name, allow the user to push his data
+    to the new location or wipe the folder and start from scratch
+  * Wizard: Make setting a custom folder as a sync target work again
+  * Fix application icon
+  * User-Agent now contains "Mozilla/5.0" and the Platform name (for firewall/proxy compat)
+  * Server side directory moves will be detected
+  * New setup wizard, defaulting to root syncing (only for new setups)
+  * Improved thread stop/termination
+
+version 1.2.5 (release 2013-04-23 ), csync 0.70.7 required
+  * [Fixes] NSIS installer fixes
+  * [Fixes] Fix crash race by making certificateChain() thread safe
+  * [Fixes] Build with older CMake versions (CentOS/RHEL 6) 
+  * [Fixes] Wording in GUI
+  * [Fixes] Silently ignore "installed = true" status.php
+  * Set log verbosity before calling csync_init.
+  * GUI feedback for the statistics copy action
+  * Safer approach for detecting duplicate sync runs
+
+version 1.2.4 (release 2013-04-11 ), csync 0.70.6 required
+  * [Fixes] Clarify string in folder wizard
+  * [Fixes] Fixed some valgrind warnings
+  * [Fixes] Ensure that only one sync thread can ever run 
+  * [Fixes] Fix default config storage path
+  * [Fixes] Skip folders with no absolute path
+  * [Fixes] Allow setting the configuration directory on command line
+
+version 1.2.3 (release 2013-04-02 ), csync 0.70.5 required
+  * [Fixes] Unbreak self-signed certificate handling
+
+version 1.2.2 (release 2013-04-02 ), csync 0.70.5 required
+  * [Fixes] Do not crash when local file tree contains symlinks
+  * [Fixes] Correctly handle locked files on Windows
+  * [Fixes] Display errors in all members of the SSL chain
+  * [Fixes] Enable Accessibility features on Windows
+  * [Fixes] Make setupFavLink work properly on Mac OS
+  * [Fixes] Ignore temporary files created by MS Office
+  * [Gui] Support Nautilus in setupFavLink
+
+version 1.2.1 (release 2013-02-26 ), csync 0.70.4 required
+  * [Fixes] Leave configured folders on configuration changes.
+  * [Fixes] Do not allow to finish the setup dialog if connection can't be established.
+  * [Fixes] Better handling of credentials in setup dialog.
+  * [Fixes] Do not leak fd's to /dev/null when using gnutls
+  * [Fixes] Stop sync scheduling when configuration wizard starts.
+  * [Fixes] Clear pending network requests when stepping back in config wizard.
+  * [Fixes] User password dialog asynchronous issues.
+  * [Fixes] Make folderman starting and stoping the scheduling.
+  * [Fixes] Various minor fixes and cleanups.
+  * [Fixes] Crash on pausing sync
+  * [Fixes] Stale lock file after pausing sync
+  * [App] Load translations from app dir or bundle as well.
+  * [Platform] Build fixes and simplifications, ie. build only one lib.
+  * [Platform] Added some getter/setters for configuration values.
+  * [Platform] Added man pages.
+  * [Platform] Simplified/fixed credential store usage and custom configs.
+  * [Platform] Added soname version to libowncloudsync.
+  * [Platform] Pull in Qt translations
+  * [Gui]  Make sync result popups less annoyingq
+  * [Gui] Fix for result popup
+
+version 1.2.0 (release 2013-01-24 ), csync 0.70.2 required
+  * [GUI] New status dialog to show a detailed list of synced files.
+  * [GUI] New tray notifications about synced files.
+  * [GUI] New platform specific icon set.
+  * [App] Using cross platform QtKeychain library to store credentials crypted.
+  * [App] Use cross platform notification for changes in the local file system rather than regular poll.
+  * [Fixes] Improved SSL Certificate handling and SSL fixes troughout syncing.
+  * [Fixes] Fixed proxy authentication.
+  * [Fixes] Allow brackets in folder name alias.
+  * [Fixes] Lots of other minor fixes.
+  * [Platform] cmake fixes.
+  * [Platform] Improved, more detailed error reporting.
+
+version 1.1.4 (release 2012-12-19 ), csync 0.60.4 required
+  * No changes to mirall, only csync fixes.
+
+version 1.1.3 (release 2012-11-30 ), csync 0.60.3 required
+  * No changes to mirall, only csync fixes.
+
+version 1.1.2 (release 2012-11-26 ), csync 0.60.2 required
+  * [Fixes] Allow to properly cancel the password dialog.
+  * [Fixes] Share folder name correctly percent encoded with old Qt
+            4.6 builds ie. Debian.
+  * [Fixes] If local sync dir is not existing, create it.
+  * [Fixes] lots of other minor fixes.
+  * [GUI] Display error messages in status dialog.
+  * [GUI] GUI fixes for the connection wizard.
+  * [GUI] Show username for connection in statusdialog.
+  * [GUI] Show intro wizard on new connection setup.
+  * [APP] Use CredentialStore to better support various credential
+          backends.
+  * [APP] Handle missing local folder more robust: Create it if
+          missing instead of ignoring.
+  * [APP] Simplify treewalk code.
+  * [Platform] Fix Mac building
+
+version 1.1.1 (release 2012-10-18), csync 0.60.1 required
+  * [GUI]   Allow changing folder name in single folder mode
+  * [GUI]   Windows: Add license to installer
+  * [GUI]   owncloud --logwindow will bring up the log window
+            in an already running instance
+  * [Fixes] Make sure SSL errors are always handled
+  * [Fixes] Allow special characters in folder alias
+  * [Fixes] Proper workaround for Menu bug in Ubuntu
+  * [Fixes] csync: Fix improper memory cleanup which could
+            cause memory leaks and crashes
+  * [Fixes] csync: Fix memory leak
+  * [Fixes] csync: Allow single quote (') in file names
+  * [Fixes] csync: Remove stray temporary files
+
+  * [GUI]   Reworked tray context menu.
+  * [GUI]   Users can now sync the server root folder.
+  * [Fixes] Proxy support: now supports Proxy Auto-Configuration (PAC)
+            on Windows, reliability fixes across all OSes.
+  * [Fixes] Url entry field in setup assistant handles http/https correctly.
+  * [Fixes] Button enable state in status dialog.
+  * [Fixes] Crash fixed on ending the client, tray icon related.
+  * [Fixes] Crash through wrong delete operator.
+  * [MacOS] behave correctly on retina displays.
+  * [MacOS] fix focus policy.
+  * [MacOS] Packaging improvements.
+  * [MacOS] Packaging improvements.
+  * [Platform] Windows: Setup closes client prior to uninstall.
+  * [Platform] Windows: ownCloud gets added to autorun by default.
+  * [Platform] insert correct version info from cmake.
+  * [Platform] csync conf file and database were moved to the users app data
+               directory, away from the .csync dir.
+  *         Renamed exclude.lst to sync-exclude.lst and moved it to
+            /etc/appName()/ for more clean packaging. From the user path,
+	    still exclude.lst is read if sync-exclude.lst is not existing.
+  *         Placed custom.ini with customization options to /etc/appName()
+
+version 1.0.5 (release 2012-08-14), csync 0.50.8 required
+  * [Fixes] Fixed setup dialog: Really use https if checkbox is activated.
+
+version 1.0.4 (release 2012-08-10), csync 0.50.8 required
+  * [APP] ownCloud is now a single instance app, can not start twice any more.
+  * [APP] Proxy support
+  * [APP] Handle HTTP redirection correctly, note new url.
+  * [APP] More relaxed handling of read only directories in the sync paths.
+  * [APP] Started to split off a library with sync functionality, eg for KDE
+  * [APP] Make ownCloud Info class a singleton, more robust.
+  * [GUI] New, simplified connection wizard.
+  * [GUI] Added ability for customized theming.
+  * [GUI] Improved icon size handling.
+  * [GUI] Removed Log Window Button, log available through command line.
+  * [GUI] Proxy configuration dialog added.
+  * [GUI] Added Translations to languages Slovenian, Polish, Catalan,
+          Portuguese (Brazil), German, Greek, Spanish, Czech, Italian, Slovak,
+	  French, Russian, Japanese, Swedish, Portuguese (Portugal)
+	  all with translation rate >90%.
+  * [Fixes] Loading of self signed certs into Networkmanager (#oc-843)
+  * [Fixes] Win32: Handle SSL dll loading correctly.
+  * [Fixes] Many other small fixes and improvements.
+
+version 1.0.3 (release 2012-06-19), csync 0.50.7 required
+  * [GUI] Added a log window which catches the logging if required and
+          allows to save for information.
+  * [CMI] Added options --help, --logfile and --logflush
+  * [APP] Allow to specify sync frequency in the config file.
+  * [Fixes] Do not use csync database files from a sync before.
+  * [Fixes] In Connection wizard, write the final config onyl if
+            the user really accepted. Also remove the former database.
+  * [Fixes] More user expected behaviour deletion of sync folder local
+            and remote.
+  * [Fixes] Allow special characters in the sync directory names
+  * [Fixes] Win32: Fixed directory removal with special character dirs.
+  * [Fixes] MacOS: Do not flood the system log any more
+  * [Fixes] MacOS: Put app translations to correct places
+  * [Fixes] Win32: Fix loading of csync state db.
+  * [Fixes] Improved some english grammar.
+  * [Platform] Added krazy2 static code checks.
+
+version 1.0.2 (release 2012-05-18), csync 0.50.6 required
+  * [GUI] New icon set for ownCloud client
+  * [GUI] No splashscreen any more (oC Bug #498)
+  * [GUI] Russian translation added
+  * [GUI] Added 'open ownCloud' to traymenu
+  * [GUI] "Pause" and "Resume" instead of Enable/Disable
+  * [Fixes] Long running syncs can be interrupted now.
+  * [Fixes] Dialogs comes to front on click
+  * [Fixes] Open local sync folder from tray and status for win32
+  * [Fixes] Load exclude.lst correctly on MacOSX
+    + csync fixes.
+
+version 1.0.1 (release 2012-04-18), csync 0.50.5 required
+  * [Security] Support SSL Connections
+  * [Security] SSL Warning dialog
+  * [Security] Do not store password in clear text anymore
+  * [Security] Restrict credentials to the configured host
+  * [Security] Added ability to forbid local password storage.
+  * [Fixes] Various fixes of the startup behaviour.
+  * [Fixes] Various fixes in sync status display
+  * [GUI] Various error messages for user display improved.
+  * [GUI] fixed terms and Translations
+  * [GUI] fixed translation loading
+  * [Intern] Migrate old credentials to new format
+  * [Intern] Some code refactorings, got rid of rotten QWebDav lib
+  * [Intern] lots of cmake cleanups
+  * [Intern] Backport to Qt Version 4.6 for compat. with older distros.
+  * [Platform] MacOSX porting efforts
+  * [Platform] MacOSX Bundle creation added
+  * [Platform] Enabled ranslations on Windows.
+
