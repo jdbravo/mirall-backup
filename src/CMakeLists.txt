@@ -267,6 +267,7 @@ set(mirall_SRCS
     mirall/ignorelisteditor.cpp
     mirall/owncloudgui.cpp
     mirall/socketapi.cpp
+    mirall/backupfilesystemmodel.cpp
 )
 
 set(mirall_HEADERS
@@ -293,6 +294,7 @@ set(mirall_HEADERS
     mirall/protocolwidget.h
     mirall/owncloudgui.h
     mirall/socketapi.h
+    mirall/backupfilesystemmodel.h
 )
 
 if( UNIX AND NOT APPLE)

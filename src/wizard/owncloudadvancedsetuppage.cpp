@@ -17,6 +17,7 @@
 #include <QFileDialog>
 #include <QUrl>
 #include <QTimer>
+#include <QTreeView>
 
 #include "QProgressIndicator.h"
 
@@ -27,6 +28,7 @@
 #include "mirall/theme.h"
 #include "mirall/mirallconfigfile.h"
 #include "creds/abstractcredentials.h"
+#include "mirall/backupfilesystemmodel.h"
 
 namespace Mirall
 {
@@ -54,8 +56,29 @@ OwncloudAdvancedSetupPage::OwncloudAdvancedSetupPage()
     stopSpinner();
     setupCustomization();
 
-    connect( _ui.pbSelectLocalFolder, SIGNAL(clicked()), SLOT(slotSelectFolder()));
+    //Jdbravo: We will not use the pbSelectLocalFolder any more, instead we will use the treeView
+    //connect( _ui.pbSelectLocalFolder, SIGNAL(clicked()), SLOT(slotSelectFolder()));
     setButtonText(QWizard::NextButton, tr("Connect..."));
+
+    QTreeView *tree = _ui.wizardTreeView;
+    QSet<QString> folders;
+    model = new BackupFileSystemModel(this,folders);
+
+    model->setRootPath(QDir::rootPath());
+
+    model->setFilter(QDir::AllDirs | QDir::NoDotAndDotDot);
+
+
+
+    tree->setModel(model);
+    tree->setColumnHidden( 1, true );
+    tree->setColumnHidden( 2, true );
+    tree->setColumnHidden( 3, true );
+    tree->setRootIndex(model->index(QDir::rootPath()));
+    tree->setCurrentIndex(model->index(QDir::homePath()));
+    tree->expand(model->index(QDir::homePath()));
+
+
 }
 
 void OwncloudAdvancedSetupPage::setupCustomization()
@@ -102,7 +125,8 @@ void OwncloudAdvancedSetupPage::updateStatus()
     // check if the local folder exists. If so, and if its not empty, show a warning.
     QString t;
 
-    _ui.pbSelectLocalFolder->setText(QDir::toNativeSeparators(locFolder));
+    //Jdbravo: We will not use the pbSelectLocalFolder any more, instead we will use the treeView
+    //_ui.pbSelectLocalFolder->setText(QDir::toNativeSeparators(locFolder));
     if (dataChanged()) {
         if( _remoteFolder.isEmpty() || _remoteFolder == QLatin1String("/") ) {
             t = tr("Your entire account will be synced to the local folder '%1'.")
@@ -148,7 +172,9 @@ bool OwncloudAdvancedSetupPage::dataChanged()
     AbstractCredentials* oldCredentials(oldAccount->credentials());
     const bool differentCreds(oldCredentials->changed(newCredentials));
     delete newCredentials;
-    const QString newLocalFolder(QDir::toNativeSeparators(_ui.pbSelectLocalFolder->text()));
+    //Jdbravo: We will not use the pbSelectLocalFolder any more, instead we will use the treeView
+    const QString newLocalFolder("");
+    //const QString newLocalFolder(QDir::toNativeSeparators(_ui.pbSelectLocalFolder->text()));
     const QString oldLocalFolder(QDir::toNativeSeparators(_oldLocalFolder));
 
     return ((url != oldAccount->url().toString()) || differentCreds || (oldLocalFolder != newLocalFolder));
@@ -234,7 +260,8 @@ void OwncloudAdvancedSetupPage::slotSelectFolder()
 {
     QString dir = QFileDialog::getExistingDirectory(0, tr("Local Sync Folder"), QDir::homePath());
     if( !dir.isEmpty() ) {
-        _ui.pbSelectLocalFolder->setText(dir);
+        //Jdbravo: We will not use the pbSelectLocalFolder any more, instead we will use the treeView
+        //_ui.pbSelectLocalFolder->setText(dir);
         wizard()->setProperty("localFolder", dir);
         updateStatus();
     }

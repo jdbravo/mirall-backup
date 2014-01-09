@@ -20,6 +20,7 @@
 
 #include "wizard/owncloudwizardcommon.h"
 #include "ui_owncloudadvancedsetuppage.h"
+#include "backupfilesystemmodel.h"
 
 class QProgressIndicator;
 
@@ -65,6 +66,7 @@ private:
   QProgressIndicator* _progressIndi;
   QString _oldLocalFolder;
   QString _remoteFolder;
+  BackupFileSystemModel *model;
 };
 
 } // ns Mirall
