@@ -204,16 +204,33 @@ QString OwncloudAdvancedSetupPage::localFolder() const
     QString folder = wizard()->property("localFolder").toString();
     return folder;
 }
+QStringList OwncloudAdvancedSetupPage::localFolders()
+{
+    return _localFolders;
+}
 
 bool OwncloudAdvancedSetupPage::validatePage()
 {
+    //I don't know where exactly get the list of checked folders, but here is working fine
+    QSet<QPersistentModelIndex> selectedFoldersIndex = model->getChecklist();
+    _localFolders.clear();
+    if (!selectedFoldersIndex.empty()) {
+        foreach (const QPersistentModelIndex &value, selectedFoldersIndex) {
+            QString folderPath=model->filePath(value);
+            _localFolders.append(folderPath);
+            qDebug()<<"local folder selected " << folderPath;
+        }
+    }
+
+
     if(!_created) {
         setErrorString(QString::null);
         _checking = true;
         startSpinner();
         emit completeChanged();
 
-        emit createLocalAndRemoteFolders(localFolder(), _remoteFolder);
+        //emit createLocalAndRemoteFolders(localFolder(), _remoteFolder);
+        emit createRemoteFolders(&_localFolders);
         return false;
     } else {
         // connecting is running
@@ -254,17 +271,6 @@ void OwncloudAdvancedSetupPage::setRemoteFolder( const QString& remoteFolder )
 void OwncloudAdvancedSetupPage::setMultipleFoldersExist(bool exist)
 {
     _multipleFoldersExist = exist;
-}
-
-void OwncloudAdvancedSetupPage::slotSelectFolder()
-{
-    QString dir = QFileDialog::getExistingDirectory(0, tr("Local Sync Folder"), QDir::homePath());
-    if( !dir.isEmpty() ) {
-        //Jdbravo: We will not use the pbSelectLocalFolder any more, instead we will use the treeView
-        //_ui.pbSelectLocalFolder->setText(dir);
-        wizard()->setProperty("localFolder", dir);
-        updateStatus();
-    }
 }
 
 void OwncloudAdvancedSetupPage::setConfigExists(bool config)

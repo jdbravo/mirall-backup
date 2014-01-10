@@ -37,6 +37,7 @@ public:
   virtual int nextId() const;
   bool validatePage();
   QString localFolder() const;
+  QStringList localFolders();
   void setRemoteFolder( const QString& remoteFolder);
   void setMultipleFoldersExist( bool exist );
   void directoriesCreated();
@@ -44,12 +45,12 @@ public:
 
 signals:
   void createLocalAndRemoteFolders(const QString&, const QString&);
+  void createRemoteFolders(QStringList*);
 
 public slots:
   void setErrorString( const QString&  );
 
 private slots:
-  void slotSelectFolder();
 
 private:
   void setupCustomization();
@@ -66,6 +67,7 @@ private:
   QProgressIndicator* _progressIndi;
   QString _oldLocalFolder;
   QString _remoteFolder;
+  QStringList _localFolders;
   BackupFileSystemModel *model;
 };
 

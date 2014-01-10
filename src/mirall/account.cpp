@@ -204,6 +204,7 @@ QNetworkReply *Account::davRequest(const QByteArray &verb, const QString &relPat
 
 QNetworkReply *Account::davRequest(const QByteArray &verb, const QUrl &url, QNetworkRequest req, QIODevice *data)
 {
+    qDebug()<<"la url es: "<< url.toString();
     req.setUrl(url);
     return _am->sendCustomRequest(req, verb, data);
 }
@@ -247,6 +248,22 @@ QUrl Account::concatUrlPath(const QUrl &url, const QString &concatPath)
     path += concatPath;
     tmpUrl.setPath(path);
     return tmpUrl;
+}
+
+QUrl Account::concatDirPath(const QDir &dir, const QString &concatPath)
+{
+    QDir tmpDir = dir;
+    QString path = tmpDir.path();
+    // avoid '//'
+    if (path.endsWith('/') && concatPath.startsWith('/')) {
+        path.chop(1);
+    } // avoid missing '/'
+    else if (!path.endsWith('/') && !concatPath.startsWith('/')) {
+        path += QLatin1Char('/');
+    }
+    path += concatPath;
+
+    return path;
 }
 
 QString Account::_configFileName;

@@ -25,6 +25,7 @@
 #include "mirall/networkjobs.h"
 
 #include "wizard/owncloudwizardcommon.h"
+#include "structurechecker.h"
 
 namespace Mirall {
 
@@ -77,9 +78,11 @@ private slots:
     void slotConnectionCheck(QNetworkReply*);
 
     void slotCreateLocalAndRemoteFolders(const QString&, const QString&);
+    void slotCreateRemoteFolders(QStringList*);
     void slotAuthCheckReply(QNetworkReply*);
     void slotCreateRemoteFolderFinished(QNetworkReply::NetworkError);
     void slotAssistantFinished( int );
+    void slotStructureCreated();
 
 private:
     explicit OwncloudSetupWizard(QObject *parent = 0 );
@@ -95,6 +98,7 @@ private:
     Account* _account;
     OwncloudWizard* _ocWizard;
     QString _remoteFolder;
+    StructureChecker *_sC;
 
 };
 

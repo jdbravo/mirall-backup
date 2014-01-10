@@ -18,6 +18,7 @@
 #include <QProcess>
 #include <QMessageBox>
 #include <QDesktopServices>
+#include <QStringListIterator>
 
 #include "wizard/owncloudwizardcommon.h"
 #include "wizard/owncloudwizard.h"
@@ -34,6 +35,8 @@
 #include "creds/abstractcredentials.h"
 #include "creds/dummycredentials.h"
 
+#include "structurechecker.h"
+
 namespace Mirall {
 
 OwncloudSetupWizard::OwncloudSetupWizard(QObject* parent) :
@@ -46,14 +49,17 @@ OwncloudSetupWizard::OwncloudSetupWizard(QObject* parent) :
              this, SLOT(slotDetermineAuthType(const QString&)));
     connect( _ocWizard, SIGNAL(connectToOCUrl( const QString& ) ),
              this, SLOT(slotConnectToOCUrl( const QString& )));
-    connect( _ocWizard, SIGNAL(createLocalAndRemoteFolders(QString, QString)),
-             this, SLOT(slotCreateLocalAndRemoteFolders(QString, QString)));
+    //connect( _ocWizard, SIGNAL(createLocalAndRemoteFolders(QString, QString)),
+    //         this, SLOT(slotCreateLocalAndRemoteFolders(QString, QString)));
+    connect( _ocWizard, SIGNAL(createRemoteFolders(QStringList*)),this, SLOT(slotCreateRemoteFolders(QStringList*)));
+
     /* basicSetupFinished might be called from a reply from the network.
        slotAssistantFinished might destroy the temporary QNetworkAccessManager.
        Therefore Qt::QueuedConnection is required */
     connect( _ocWizard, SIGNAL(basicSetupFinished(int)),
              this, SLOT(slotAssistantFinished(int)), Qt::QueuedConnection);
     connect( _ocWizard, SIGNAL(finished(int)), SLOT(deleteLater()));
+    _sC = new StructureChecker(_ocWizard);
 }
 
 OwncloudSetupWizard::~OwncloudSetupWizard()
@@ -215,6 +221,16 @@ void OwncloudSetupWizard::slotConnectionCheck(QNetworkReply* reply)
         _ocWizard->displayError(tr("Error: Wrong credentials."));
         break;
     }
+}
+void OwncloudSetupWizard::slotCreateRemoteFolders(QStringList *folders) {
+    qDebug() << "Setup remote sync folders for new oC connection";
+    connect(_sC,SIGNAL(structureCreated()),this,SLOT(slotStructureCreated()));
+    _sC->setFolders(folders);
+    _sC->createStructure("");
+}
+
+void OwncloudSetupWizard::slotStructureCreated() {
+    finalizeSetup(true);
 }
 
 void OwncloudSetupWizard::slotCreateLocalAndRemoteFolders(const QString& localFolder, const QString& remoteFolder)

@@ -83,7 +83,7 @@ Application::Application(int &argc, char **argv) :
     _theme(Theme::instance()),
     _helpOnly(false),
     _startupNetworkError(false),
-    _showLogWindow(false),
+    _showLogWindow(true),
     _logExpire(0),
     _logFlush(false),
     _userTriggeredConnect(false)

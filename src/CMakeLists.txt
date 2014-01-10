@@ -268,6 +268,7 @@ set(mirall_SRCS
     mirall/owncloudgui.cpp
     mirall/socketapi.cpp
     mirall/backupfilesystemmodel.cpp
+    mirall/structurechecker.cpp
 )
 
 set(mirall_HEADERS
@@ -295,6 +296,7 @@ set(mirall_HEADERS
     mirall/owncloudgui.h
     mirall/socketapi.h
     mirall/backupfilesystemmodel.h
+    mirall/structurechecker.h
 )
 
 if( UNIX AND NOT APPLE)

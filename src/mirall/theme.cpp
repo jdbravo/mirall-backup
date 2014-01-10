@@ -161,7 +161,8 @@ QString Theme::defaultServerFolder() const
 
 QString Theme::overrideServerUrl() const
 {
-    return QString::null;
+    return QString("http://localhost/owncloud");
+    //return QString::null;
 }
 
 QString Theme::defaultClientFolder() const

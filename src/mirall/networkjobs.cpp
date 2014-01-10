@@ -243,6 +243,7 @@ void MkColJob::start()
 void MkColJob::finished()
 {
     emit finished(reply()->error());
+    emit finished(reply()); //We need to get the slot created from the reply
 }
 
 /*********************************************************************************************/

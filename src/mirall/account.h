@@ -21,6 +21,7 @@
 #include <QNetworkRequest>
 #include <QSslCertificate>
 #include <QSslError>
+#include <QDir>
 
 class QSettings;
 class QNetworkReply;
@@ -70,6 +71,7 @@ public:
                };
 
     static QString davPath() { return "remote.php/webdav/"; }
+    static QString backupPath() { return "backups/"; }
 
     Account(AbstractSslErrorHandler *sslErrorHandler = 0, QObject *parent = 0);
     ~Account();
@@ -132,6 +134,10 @@ public:
 
     // static helper function
     static QUrl concatUrlPath(const QUrl &url, const QString &concatPath);
+
+    // same as concatUrlPath but with Dirs
+    static QUrl concatDirPath(const QDir &dir, const QString &concatPath);
+
     static QSettings* settingsWithGroup(const QString &group);
 
     // to be called by credentials only

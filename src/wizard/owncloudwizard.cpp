@@ -64,8 +64,10 @@ OwncloudWizard::OwncloudWizard(QWidget *parent)
     connect( _setupPage, SIGNAL(determineAuthType(QString)), SIGNAL(determineAuthType(QString)));
     connect( _httpCredsPage, SIGNAL(connectToOCUrl(QString)), SIGNAL(connectToOCUrl(QString)));
     connect( _shibbolethCredsPage, SIGNAL(connectToOCUrl(QString)), SIGNAL(connectToOCUrl(QString)));
-    connect( _advancedSetupPage, SIGNAL(createLocalAndRemoteFolders(QString, QString)),
-             SIGNAL(createLocalAndRemoteFolders(QString, QString)));
+    //connect( _advancedSetupPage, SIGNAL(createLocalAndRemoteFolders(QString, QString)),
+    //         SIGNAL(createLocalAndRemoteFolders(QString, QString)));
+    connect( _advancedSetupPage, SIGNAL(createRemoteFolders(QStringList*)),
+             SIGNAL(createRemoteFolders(QStringList*)));
 
     Theme *theme = Theme::instance();
     setWindowTitle( tr("%1 Connection Wizard").arg(theme->appNameGUI()));

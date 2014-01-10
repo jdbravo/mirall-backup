@@ -148,10 +148,12 @@ public:
 
 signals:
     void finished(QNetworkReply::NetworkError);
+    void finished(QNetworkReply*);
 
 private slots:
     virtual void finished();
 };
+
 
 /**
  * @brief The CheckServerJob class

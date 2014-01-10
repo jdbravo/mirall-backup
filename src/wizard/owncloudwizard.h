@@ -71,6 +71,7 @@ signals:
     void determineAuthType(const QString&);
     void connectToOCUrl( const QString& );
     void createLocalAndRemoteFolders(const QString&, const QString&);
+    void createRemoteFolders(QStringList*);
     // make sure to connect to this, rather than finished(int)!!
     void basicSetupFinished( int );
 
