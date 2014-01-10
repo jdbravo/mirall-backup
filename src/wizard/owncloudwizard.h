@@ -17,6 +17,7 @@
 #define MIRALL_OWNCLOUD_WIZARD_H
 
 #include <QWizard>
+#include <QStringList>
 
 #include "wizard/owncloudwizardcommon.h"
 
@@ -50,6 +51,7 @@ public:
     void setupCustomMedia( QVariant, QLabel* );
     QString ocUrl() const;
     QString localFolder() const;
+    QStringList localFolders();
 
     void enableFinishOnResultWidget(bool enable);
 

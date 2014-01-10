@@ -4,6 +4,7 @@
 #include <QUrl>
 #include <QDebug>
 
+
 #include "structurechecker.h"
 #include "account.h"
 #include "networkjobs.h"
@@ -55,14 +56,14 @@ void StructureChecker::slotAuthCheckReply(QNetworkReply *reply)
                 position=_foldersStructure.indexOf(remoteFolder.mid(1));
             }
         }
-
+        qDebug() << "encontre " << remoteFolder << " en la posicion " << position;
 
         if (position==-1||position==_foldersStructure.count()-1) {
             qDebug() << "all directories created";
             emit structureCreated();
              _ocWizard->enableFinishOnResultWidget(true);
         } else {
-
+            qDebug() << "voy a crear la estructura para " << _foldersStructure.at(position+1) << "en la posicion" << (position+1) << " la lista tiene " << _foldersStructure.count();
             createStructure(_foldersStructure.at(position+1));
         }
     } else if( errId == QNetworkReply::ContentNotFoundError ) {
@@ -95,7 +96,7 @@ void StructureChecker::slotCreateRemoteFolderFinished( QNetworkReply *reply )
 
     qDebug() << "** webdav mkdir request finished ";
     QString remoteFolder=removeWebAddress(reply->url()).path();
-    if( ! reply->error() ) {
+    if( reply->error()==QNetworkReply::NoError ) {
         _ocWizard->appendToConfigurationLog( tr("Remote folder %1 created successfully.").arg(remoteFolder));
         int position=_foldersStructure.indexOf(remoteFolder);
         if (position==-1) {
@@ -118,13 +119,16 @@ void StructureChecker::slotCreateRemoteFolderFinished( QNetworkReply *reply )
 }
 
 void StructureChecker::setFolders(QStringList *folders) {
-    QDir backupDir = QDir(Account::backupPath());
+    QDir backupDir = Account::backupPath();
     //We will generate the structure in order, ie: /home first then /home/user, etc
+
+
+    _foldersStructure.append(backupDir.path());
     foreach (const QString &value, *folders) {
 
         QStringListIterator partsIterator(value.split(QDir::separator()));
         QString path;
-        _foldersStructure.append(backupDir.path());
+
         while (partsIterator.hasNext()) {
             QString tmpPath=partsIterator.next();
             if (!tmpPath.isEmpty()) {
@@ -132,13 +136,22 @@ void StructureChecker::setFolders(QStringList *folders) {
                     path.append(tmpPath);
                 else
                     path.append(QDir::separator()+tmpPath);
+                QString concatPath = Account::concatDirPath(backupDir,path).path();
+                if (!_foldersStructure.contains(concatPath)) {
+                    _foldersStructure.append(concatPath);
+                     qDebug() << "adding to the structure the dir " << concatPath;
 
-                _foldersStructure.append(Account::concatDirPath(backupDir,path).path());
-                qDebug() << "adding to the structure the dir " << Account::concatDirPath(backupDir,path).path();
+                }
+
             }
         }
 
     }
+
+    foreach (const QString &value, _foldersStructure) {
+        qDebug()<<"este es " << value;
+    }
+
 }
 
 QDir StructureChecker::removeWebAddress(const QUrl &url) {

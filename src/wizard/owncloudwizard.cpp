@@ -100,6 +100,10 @@ QString OwncloudWizard::localFolder() const
 {
     return(_advancedSetupPage->localFolder());
 }
+QStringList OwncloudWizard::localFolders()
+{
+    return(_advancedSetupPage->localFolders());
+}
 
 QString OwncloudWizard::ocUrl() const
 {

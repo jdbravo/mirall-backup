@@ -405,7 +405,7 @@ void OwncloudSetupWizard::slotAssistantFinished( int result )
 
         Account *newAccount = _ocWizard->account();
         Account *origAccount = AccountManager::instance()->account();
-        const QString localFolder = _ocWizard->localFolder();
+        QStringList localFolders = _ocWizard->localFolders();
 
         bool isInitialSetup = (origAccount == 0);
         bool reinitRequired = newAccount->changed(origAccount, true /* ignoreProtocol, allows http->https */);
@@ -414,27 +414,39 @@ void OwncloudSetupWizard::slotAssistantFinished( int result )
         // This distinguishes three possibilities:
         // 1. Initial setup, no prior account exists
         if (isInitialSetup) {
-            folderMan->addFolderDefinition(Theme::instance()->appName(),
-                                           localFolder, _remoteFolder );
+            foreach (const QString &value, localFolders) {
+                folderMan->addFolderDefinition(value,
+                                               value, Account::concatDirPath(Account::backupPath(),value).path() );
+            }
+
             replaceDefaultAccountWith(newAccount);
         }
         // 2. Server URL or user changed, requires reinit of folders
         else if (reinitRequired) {
             // 2.1: startFromScratch: (Re)move local data, clean slate sync
             if (startFromScratch) {
-                if (ensureStartFromScratch(localFolder)) {
-                    folderMan->addFolderDefinition(Theme::instance()->appName(),
-                                                   localFolder, _remoteFolder );
-                    _ocWizard->appendToConfigurationLog(tr("<font color=\"green\"><b>Local sync folder %1 successfully created!</b></font>").arg(localFolder));
+
+                    foreach (const QString &value, localFolders) {
+                        if (ensureStartFromScratch(value)) {
+                        folderMan->addFolderDefinition(value,
+                                                       value, Account::concatDirPath(Account::backupPath(),value).path() );
+                        _ocWizard->appendToConfigurationLog(tr("<font color=\"green\"><b>Local sync folder %1 successfully created!</b></font>").arg(value));
+
+                        }
+                    }
+
+
                     replaceDefaultAccountWith(newAccount);
-                }
+
             }
             // 2.2: Reinit: Remove journal and start a sync
             else {
                 folderMan->removeAllFolderDefinitions();
-                folderMan->addFolderDefinition(Theme::instance()->appName(),
-                                               localFolder, _remoteFolder );
-                _ocWizard->appendToConfigurationLog(tr("<font color=\"green\"><b>Local sync folder %1 successfully created!</b></font>").arg(localFolder));
+                foreach (const QString &value, localFolders) {
+                    folderMan->addFolderDefinition(value,
+                                                   value, Account::concatDirPath(Account::backupPath(),value).path() );
+                    _ocWizard->appendToConfigurationLog(tr("<font color=\"green\"><b>Local sync folder %1 successfully created!</b></font>").arg(value));
+                }
                 replaceDefaultAccountWith(newAccount);
             }
         }
