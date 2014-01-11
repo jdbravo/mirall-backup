@@ -17,6 +17,9 @@
 #include <QDesktopServices>
 #include <QDir>
 #include <QUrl>
+#include <QStringList>
+#include <QListView>
+#include <QStringListModel>
 
 #include "wizard/owncloudwizardresultpage.h"
 #include "wizard/owncloudwizardcommon.h"
@@ -39,6 +42,7 @@ OwncloudWizardResultPage::OwncloudWizardResultPage()
     // required to show header in QWizard's modern style
     setSubTitle( QLatin1String(" ") );
 
+    /*
     _ui.pbOpenLocal->setText(tr("Open Local Folder"));
     _ui.pbOpenLocal->setIcon(QIcon(":/mirall/resources/folder-sync.png"));
     _ui.pbOpenLocal->setIconSize(QSize(48, 48));
@@ -52,6 +56,7 @@ OwncloudWizardResultPage::OwncloudWizardResultPage()
     _ui.pbOpenServer->setIconSize(QSize(48, 48));
     _ui.pbOpenServer->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     connect(_ui.pbOpenServer, SIGNAL(clicked()), SLOT(slotOpenServer()));
+    */
     setupCustomization();
 }
 
@@ -71,6 +76,7 @@ bool OwncloudWizardResultPage::isComplete() const
 
 void OwncloudWizardResultPage::initializePage()
 {
+    /*
     const QString localFolder = wizard()->property("localFolder").toString();
     QString text;
     if( _remoteFolder == QLatin1String("/") || _remoteFolder.isEmpty() ) {
@@ -82,7 +88,17 @@ void OwncloudWizardResultPage::initializePage()
                 .arg(_remoteFolder).arg(QDir::toNativeSeparators(localFolder));
     }
     _ui.localFolderLabel->setText( text );
+    */
 
+    QStringList folders = wizard()->property("localFolders").value<QStringList>();
+    foreach (const QString &str, folders) {
+        qDebug()<<"folder selected : " << str;
+    }
+    QListView *list=_ui.listView;
+    QStringListModel *model = new QStringListModel(this);
+    model->setStringList(folders);
+    //list->setViewMode(QListView::IconMode);
+    list->setModel(model);
 }
 
 void OwncloudWizardResultPage::setRemoteFolder(const QString &remoteFolder)

@@ -14,7 +14,6 @@ namespace Mirall {
 
 StructureChecker::StructureChecker(OwncloudWizard *ocWizard) {
      _ocWizard=ocWizard;
-     _account=_ocWizard->account();
 }
 
 StructureChecker::StructureChecker() {
@@ -33,10 +32,14 @@ void StructureChecker::createStructure(const QString &first) {
             folder=first;
         }
 
+        EntityExistsJob *job;
+        if (_ocWizard==NULL) {
+            job = new EntityExistsJob(_account, Account::concatDirPath(Account::davPath(),folder).toString(), this);
+        } else {
+            job = new EntityExistsJob(_ocWizard->account(), Account::concatDirPath(Account::davPath(),folder).toString(), this);
+        }
 
 
-
-        EntityExistsJob *job = new EntityExistsJob(_account, Account::concatDirPath(Account::davPath(),folder).toString(), this);
         connect(job, SIGNAL(exists(QNetworkReply*)), SLOT(slotAuthCheckReply(QNetworkReply*)));
         job->start();
 
@@ -85,8 +88,14 @@ void StructureChecker::slotAuthCheckReply(QNetworkReply *reply)
 
         } else {
 
+            MkColJob *job;
+            if (_ocWizard==NULL) {
+                job = new MkColJob(_account, remoteFolder, this);
+            } else {
+                job = new MkColJob(_ocWizard->account(), remoteFolder, this);
+            }
 
-            MkColJob *job = new MkColJob(_account, remoteFolder, this);
+
             connect(job, SIGNAL(finished(QNetworkReply*)), SLOT(slotCreateRemoteFolderFinished(QNetworkReply *)));
             job->start();
         }
@@ -167,7 +176,13 @@ void StructureChecker::setFolders(QStringList *folders) {
 }
 
 QDir StructureChecker::removeWebAddress(const QUrl &url) {
-    QString dirPath = url.toString().replace(_account->url().toString(),"");
+    QString dirPath;
+    if (_ocWizard==NULL) {
+        dirPath=url.toString().replace(_account->url().toString(),"");
+    } else {
+        dirPath=url.toString().replace(_ocWizard->account()->url().toString(),"");
+    }
+
     QString resourcePath = dirPath.replace(Account::davPath(),"");
     return QDir(resourcePath);
 }

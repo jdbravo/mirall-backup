@@ -66,7 +66,7 @@
        <item>
         <widget class="QLabel" name="localFolderLabel">
          <property name="text">
-          <string>Your entire account is synced to the local folder </string>
+          <string>This is the list of folders you selected to backup:</string>
          </property>
          <property name="wordWrap">
           <bool>true</bool>
@@ -90,40 +90,14 @@
         </spacer>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <widget class="QToolButton" name="pbOpenLocal">
-           <property name="minimumSize">
-            <size>
-             <width>160</width>
-             <height>80</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>PushButton</string>
-           </property>
-           <property name="toolButtonStyle">
-            <enum>Qt::ToolButtonTextUnderIcon</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QToolButton" name="pbOpenServer">
-           <property name="minimumSize">
-            <size>
-             <width>160</width>
-             <height>80</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>PushButton</string>
-           </property>
-           <property name="toolButtonStyle">
-            <enum>Qt::ToolButtonTextUnderIcon</enum>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        <layout class="QHBoxLayout" name="horizontalLayout"/>
+       </item>
+       <item>
+        <widget class="QListView" name="listView">
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+        </widget>
        </item>
        <item>
         <spacer name="verticalSpacer">

@@ -121,12 +121,14 @@ void OwncloudAdvancedSetupPage::initializePage()
 // evtl. warnings on the dialog.
 void OwncloudAdvancedSetupPage::updateStatus()
 {
+    //I don't what to show this for backups
+    /*
     const QString locFolder = localFolder();
     // check if the local folder exists. If so, and if its not empty, show a warning.
     QString t;
 
-    //Jdbravo: We will not use the pbSelectLocalFolder any more, instead we will use the treeView
-    //_ui.pbSelectLocalFolder->setText(QDir::toNativeSeparators(locFolder));
+
+    _ui.pbSelectLocalFolder->setText(QDir::toNativeSeparators(locFolder));
     if (dataChanged()) {
         if( _remoteFolder.isEmpty() || _remoteFolder == QLatin1String("/") ) {
             t = tr("Your entire account will be synced to the local folder '%1'.")
@@ -148,7 +150,8 @@ void OwncloudAdvancedSetupPage::updateStatus()
             t += tr("<p><small><strong>Warning:</strong> The local directory is not empty. "
                     "Pick a resolution!</small></p>");
         }
-        _ui.resolutionWidget->setVisible(dirNotEmpty);
+        //_ui.resolutionWidget->setVisible(dirNotEmpty);
+        _ui.resolutionWidget->setVisible(false);
     } else {
         _ui.resolutionWidget->setVisible(false);
     }
@@ -156,6 +159,9 @@ void OwncloudAdvancedSetupPage::updateStatus()
     _ui.syncModeLabel->setText(t);
     _ui.syncModeLabel->setFixedHeight(_ui.syncModeLabel->sizeHint().height());
     wizard()->resize(wizard()->sizeHint());
+    */
+    _ui.resolutionWidget->setVisible(false);
+    _ui.syncModeLabel->setText("");
 }
 
 bool OwncloudAdvancedSetupPage::dataChanged()
@@ -220,6 +226,7 @@ bool OwncloudAdvancedSetupPage::validatePage()
             _localFolders.append(folderPath);
             qDebug()<<"local folder selected " << folderPath;
         }
+        wizard()->setProperty("localFolders", _localFolders);
     }
 
 

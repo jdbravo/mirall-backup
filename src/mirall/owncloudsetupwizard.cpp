@@ -395,6 +395,8 @@ void OwncloudSetupWizard::replaceDefaultAccountWith(Account *newAccount)
 // Method executed when the user ends has finished the basic setup.
 void OwncloudSetupWizard::slotAssistantFinished( int result )
 {
+    qDebug()<<"slot assistant finished";
+
     FolderMan *folderMan = FolderMan::instance();
 
     if( result == QDialog::Rejected ) {

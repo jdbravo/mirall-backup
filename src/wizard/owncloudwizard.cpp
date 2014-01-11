@@ -170,6 +170,7 @@ void OwncloudWizard::slotCurrentPageChanged( int id )
     }
 
     if( id == WizardCommon::Page_Result ) {
+        qDebug() << "emiting the basicSetupFinished";
         disconnect(this, SIGNAL(finished(int)), this, SIGNAL(basicSetupFinished(int)));
         emit basicSetupFinished(QDialog::Accepted);
         appendToConfigurationLog( QString::null );
