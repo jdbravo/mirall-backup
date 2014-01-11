@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>484</width>
-    <height>336</height>
+    <height>593</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -56,14 +56,18 @@
     </spacer>
    </item>
    <item>
-    <layout class="QFormLayout" name="advancedBox">
-     <property name="fieldGrowthPolicy">
-      <enum>QFormLayout::ExpandingFieldsGrow</enum>
-     </property>
-     <item row="0" column="0" colspan="2">
-      <widget class="QTreeView" name="wizardTreeView"/>
+    <layout class="QVBoxLayout" name="verticalLayout_4">
+     <item>
+      <widget class="QTreeView" name="wizardTreeView">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>250</height>
+        </size>
+       </property>
+      </widget>
      </item>
-     <item row="1" column="1">
+     <item>
       <widget class="QWidget" name="resolutionWidget" native="true">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
