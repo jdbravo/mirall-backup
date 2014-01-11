@@ -234,6 +234,7 @@ mirall/networksettings.ui
 mirall/accountsettings.ui
 mirall/ignorelisteditor.ui
 mirall/protocolwidget.ui
+mirall/dialogfolderchooser.ui
 wizard/owncloudsetupnocredspage.ui
 wizard/owncloudhttpcredspage.ui
 wizard/owncloudwizardresultpage.ui
@@ -269,6 +270,7 @@ set(mirall_SRCS
     mirall/socketapi.cpp
     mirall/backupfilesystemmodel.cpp
     mirall/structurechecker.cpp
+    mirall/dialogfolderchooser.cpp
 )
 
 set(mirall_HEADERS
@@ -297,6 +299,7 @@ set(mirall_HEADERS
     mirall/socketapi.h
     mirall/backupfilesystemmodel.h
     mirall/structurechecker.h
+    mirall/dialogfolderchooser.h
 )
 
 if( UNIX AND NOT APPLE)

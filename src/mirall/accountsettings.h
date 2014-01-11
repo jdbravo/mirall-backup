@@ -81,6 +81,8 @@ protected slots:
     void slotResetCurrentFolder();
     void slotFolderWizardAccepted();
     void slotFolderWizardRejected();
+    void slotFolderChooserAccepted();
+    void slotFolderChooserRejected();
     void slotOpenAccountWizard();
     void slotHideProgress();
 

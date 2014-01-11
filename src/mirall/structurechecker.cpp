@@ -14,6 +14,11 @@ namespace Mirall {
 
 StructureChecker::StructureChecker(OwncloudWizard *ocWizard) {
      _ocWizard=ocWizard;
+     _account=_ocWizard->account();
+}
+
+StructureChecker::StructureChecker() {
+    _account=AccountManager::instance()->account();
 }
 
 void StructureChecker::createStructure(const QString &first) {
@@ -28,9 +33,13 @@ void StructureChecker::createStructure(const QString &first) {
             folder=first;
         }
 
-        EntityExistsJob *job = new EntityExistsJob(_ocWizard->account(), Account::concatDirPath(Account::davPath(),folder).toString(), this);
+
+
+
+        EntityExistsJob *job = new EntityExistsJob(_account, Account::concatDirPath(Account::davPath(),folder).toString(), this);
         connect(job, SIGNAL(exists(QNetworkReply*)), SLOT(slotAuthCheckReply(QNetworkReply*)));
         job->start();
+
     }
 }
 
@@ -38,9 +47,11 @@ void StructureChecker::createStructure(const QString &first) {
 
 void StructureChecker::slotAuthCheckReply(QNetworkReply *reply)
 {
+
     qDebug() << "response from slotAuthCheckReply";
     QString error;
     QNetworkReply::NetworkError errId = reply->error();
+
     QString remoteFolder=removeWebAddress(reply->url()).path();
 
     if( errId == QNetworkReply::NoError ) {
@@ -61,7 +72,9 @@ void StructureChecker::slotAuthCheckReply(QNetworkReply *reply)
         if (position==-1||position==_foldersStructure.count()-1) {
             qDebug() << "all directories created";
             emit structureCreated();
-             _ocWizard->enableFinishOnResultWidget(true);
+            if (_ocWizard!=NULL) {
+                _ocWizard->enableFinishOnResultWidget(true);
+            }
         } else {
             qDebug() << "voy a crear la estructura para " << _foldersStructure.at(position+1) << "en la posicion" << (position+1) << " la lista tiene " << _foldersStructure.count();
             createStructure(_foldersStructure.at(position+1));
@@ -73,22 +86,15 @@ void StructureChecker::slotAuthCheckReply(QNetworkReply *reply)
         } else {
 
 
-            MkColJob *job = new MkColJob(_ocWizard->account(), remoteFolder, this);
+            MkColJob *job = new MkColJob(_account, remoteFolder, this);
             connect(job, SIGNAL(finished(QNetworkReply*)), SLOT(slotCreateRemoteFolderFinished(QNetworkReply *)));
             job->start();
         }
     } else {
         error = tr("Error: %1").arg(reply->errorString());
     }
-    /*
-
-    if( !ok ) {
-        _ocWizard->displayError(error);
-    }
 
 
-    finalizeSetup( ok );
-    */
 }
 
 void StructureChecker::slotCreateRemoteFolderFinished( QNetworkReply *reply )
@@ -97,7 +103,9 @@ void StructureChecker::slotCreateRemoteFolderFinished( QNetworkReply *reply )
     qDebug() << "** webdav mkdir request finished ";
     QString remoteFolder=removeWebAddress(reply->url()).path();
     if( reply->error()==QNetworkReply::NoError ) {
-        _ocWizard->appendToConfigurationLog( tr("Remote folder %1 created successfully.").arg(remoteFolder));
+        if (_ocWizard!=NULL) {
+            _ocWizard->appendToConfigurationLog( tr("Remote folder %1 created successfully.").arg(remoteFolder));
+        }
         int position=_foldersStructure.indexOf(remoteFolder);
         if (position==-1) {
             if (remoteFolder.startsWith("/")) {
@@ -107,15 +115,19 @@ void StructureChecker::slotCreateRemoteFolderFinished( QNetworkReply *reply )
         if (position==-1||position==_foldersStructure.count()-1) {
             qDebug() << "all directories created";
             emit structureCreated();
-             _ocWizard->enableFinishOnResultWidget(true);
+            if (_ocWizard!=NULL) {
+                _ocWizard->enableFinishOnResultWidget(true);
+            }
         } else {
 
             createStructure(_foldersStructure.at(position+1));
         }
 
     } else  {
-        _ocWizard->appendToConfigurationLog( tr("Error creating the structure, cant create the dir %1, error: .").arg(remoteFolder,reply->errorString()));
-    }
+        if (_ocWizard!=NULL) {
+             _ocWizard->appendToConfigurationLog( tr("Error creating the structure, cant create the dir %1, error: .").arg(remoteFolder,reply->errorString()));
+        }
+   }
 }
 
 void StructureChecker::setFolders(QStringList *folders) {
@@ -155,7 +167,7 @@ void StructureChecker::setFolders(QStringList *folders) {
 }
 
 QDir StructureChecker::removeWebAddress(const QUrl &url) {
-    QString dirPath = url.toString().replace(_ocWizard->account()->url().toString(),"");
+    QString dirPath = url.toString().replace(_account->url().toString(),"");
     QString resourcePath = dirPath.replace(Account::davPath(),"");
     return QDir(resourcePath);
 }

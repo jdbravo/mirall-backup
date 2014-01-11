@@ -26,6 +26,7 @@
 #include "mirall/ignorelisteditor.h"
 #include "mirall/account.h"
 #include "creds/abstractcredentials.h"
+#include "mirall/dialogfolderchooser.h"
 
 #include <math.h>
 
@@ -137,7 +138,7 @@ void AccountSettings::slotFolderActivated( const QModelIndex& indx )
 }
 
 
-
+/*
 void AccountSettings::slotAddFolder()
 {
     FolderMan *folderMan = FolderMan::instance();
@@ -151,7 +152,19 @@ void AccountSettings::slotAddFolder()
     connect(folderWizard, SIGNAL(rejected()), SLOT(slotFolderWizardRejected()));
     folderWizard->open();
 }
+*/
+void AccountSettings::slotAddFolder()
+{
+    FolderMan *folderMan = FolderMan::instance();
+    folderMan->setSyncEnabled(false); // do not start more syncs.
 
+    qDebug()<<"showing the folder chooser";
+    DialogFolderChooser *folderChooser = new DialogFolderChooser(this);
+    connect(folderChooser, SIGNAL(accepted()), SLOT(slotFolderChooserAccepted()));
+    connect(folderChooser, SIGNAL(rejected()), SLOT(slotFolderChooserRejected()));
+
+    folderChooser->show();
+}
 
 void AccountSettings::slotFolderWizardAccepted()
 {
@@ -180,6 +193,44 @@ void AccountSettings::slotFolderWizardAccepted()
 void AccountSettings::slotFolderWizardRejected()
 {
     qDebug() << "* Folder wizard cancelled";
+    FolderMan *folderMan = FolderMan::instance();
+    folderMan->setSyncEnabled(true);
+    folderMan->slotScheduleAllFolders();
+}
+void AccountSettings::slotFolderChooserAccepted()
+{
+    DialogFolderChooser *folderChooser = qobject_cast<DialogFolderChooser*>(sender());
+    FolderMan *folderMan = FolderMan::instance();
+
+    qDebug() << "* Folder chooser completed";
+
+    QString sourceFolder = folderChooser->getSelectedFolder();
+
+    QString alias        = sourceFolder;
+
+    QString targetPath = Account::concatDirPath(Account::backupPath(),sourceFolder).path();
+
+
+
+    if (!FolderMan::ensureJournalGone( sourceFolder ))
+        return;
+    folderMan->addFolderDefinition(alias, sourceFolder, targetPath );
+
+    Folder *f = folderMan->setupFolderFromConfigFile( alias );
+
+    slotAddFolder( f );
+    folderMan->setSyncEnabled(true);
+    if( f ) {
+        qDebug() << "all done f";
+        folderMan->slotScheduleAllFolders();
+        emit folderChanged();
+    }
+    slotButtonsSetEnabled();
+
+}
+void AccountSettings::slotFolderChooserRejected()
+{
+    qDebug() << "* Folder chooser cancelled";
     FolderMan *folderMan = FolderMan::instance();
     folderMan->setSyncEnabled(true);
     folderMan->slotScheduleAllFolders();

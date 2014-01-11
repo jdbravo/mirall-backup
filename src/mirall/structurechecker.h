@@ -31,12 +31,14 @@ class StructureChecker : public QObject
 
 public:
     StructureChecker(OwncloudWizard*);
+    StructureChecker();
     void createStructure(const QString &first="");
     void setFolders(QStringList *);
 
 private:
     QStringList _foldersStructure;
-    OwncloudWizard* _ocWizard;
+    OwncloudWizard* _ocWizard = NULL;
+    Account *_account;
     QDir removeWebAddress(const QUrl&);
 
 private slots:

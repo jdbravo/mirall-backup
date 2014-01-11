@@ -203,12 +203,14 @@ Folder* FolderMan::setupFolderFromConfigFile(const QString &file) {
 
     qDebug() << "  ` -> setting up:" << file;
     QString escapedAlias(file);
+
     // check the unescaped variant (for the case the filename comes out
     // of the directory listing. If the file is not existing, escape the
     // file and try again.
     QFileInfo cfgFile( _folderConfigPath, file);
 
-    if( !cfgFile.exists() ) {
+    if( !cfgFile.exists() || !cfgFile.isFile()  ) {
+
         // try the escaped variant.
         escapedAlias = escapeAlias(file);
         cfgFile.setFile( _folderConfigPath, escapedAlias );

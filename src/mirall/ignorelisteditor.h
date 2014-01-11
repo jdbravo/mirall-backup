@@ -39,6 +39,8 @@ private slots:
     void slotAddPattern();
     void slotEditPattern(QListWidgetItem*);
 
+
+
 private:
     void readIgnoreFile(const QString& file, bool readOnly);
     Ui::IgnoreListEditor *ui;
