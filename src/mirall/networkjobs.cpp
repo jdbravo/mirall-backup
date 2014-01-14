@@ -278,6 +278,7 @@ void LsColJob::finished()
     if (reply()->attribute(QNetworkRequest::HttpStatusCodeAttribute) == 207) {
         // Parse DAV response
         QXmlStreamReader reader(reply());
+
         reader.addExtraNamespaceDeclaration(QXmlStreamNamespaceDeclaration("d", "DAV:"));
 
         QStringList folders;
@@ -298,6 +299,158 @@ void LsColJob::finished()
             }
         }
         emit directoryListing(folders);
+    }
+}
+
+/*********************************************************************************************/
+
+LsAllJob::LsAllJob(Account *account, Node *node, QObject *parent)
+    : AbstractNetworkJob(account, node->path(), parent)
+{
+    _node=node;
+}
+
+void LsAllJob::start()
+{
+    QNetworkRequest req;
+    req.setRawHeader("Depth", "1");
+    QByteArray xml("<?xml version=\"1.0\" ?>\n"
+                   "<d:propfind xmlns:d=\"DAV:\">\n"
+                   "  <d:prop>\n"
+                   "    <d:resourcetype/>\n"
+                   "  </d:prop>\n"
+                   "</d:propfind>\n");
+    QBuffer *buf = new QBuffer(this);
+    buf->setData(xml);
+    buf->open(QIODevice::ReadOnly);
+    QNetworkReply *reply = davRequest("PROPFIND", path(), req, buf);
+    buf->setParent(reply);
+    setReply(reply);
+    setupConnections(reply);
+    AbstractNetworkJob::start();
+}
+
+Node* LsAllJob::parseNode(QXmlStreamReader& xml) {
+    if(xml.tokenType() != QXmlStreamReader::StartElement && xml.name() != "resource"){
+        qDebug() << "Called XML parseNode without a Node in the XML stream!";
+        return 0;
+    }
+    //We need to read the childrens of resource
+    qDebug()<<"reading xml of the node";
+    QString path=0;
+    bool isDir=false;
+    xml.readNext();
+    qDebug()<<"starting reading the response";
+    while(true) {
+        qDebug()<<"                checking " << xml.name();
+        if (xml.name()==QLatin1String("href")&&path==0) {
+            xml.readNext();
+            path=xml.text().toString();
+            qDebug()<<"                the fileName is "<<path;
+        }
+        if (xml.name()==QLatin1String("collection")&&!isDir) {
+            isDir=true;
+        }
+        xml.readNext();
+        if (xml.name()==QLatin1String("response")) {
+            qDebug()<<"ending reading the response";
+            break;
+        }
+    }
+    if (path!=0) {
+        if (path.endsWith("/"))
+            path.chop(1);
+        QStringList pathNameParts=path.split("/");
+        QString fileName=pathNameParts.last();
+
+        Node::Type typeT;
+        if (isDir) {
+            typeT = Node::Dir;
+        } else {
+            typeT = Node::File;
+        }
+        Node *node;
+
+        if(_parentIgnored) {
+            node = new Node(typeT,fileName,_node);
+            _node->children.append(node);
+        } else {
+            _parentIgnored=true;
+        }
+
+        qDebug()<<"returning the node";
+        return node;
+    }
+    return 0;
+
+
+}
+
+void LsAllJob::finished()
+{
+    if (reply()->attribute(QNetworkRequest::HttpStatusCodeAttribute) == 207) {
+        // Parse DAV response
+        //qDebug()<<"the xml is\n" << QString(reply()->readAll());
+        QXmlStreamReader reader(reply());
+
+        reader.addExtraNamespaceDeclaration(QXmlStreamNamespaceDeclaration("d", "DAV:"));
+
+        QVector<Node *> files;
+        QString currentItem;
+
+        //bool isFirst=true;
+        while (!reader.atEnd()) {
+            QXmlStreamReader::TokenType type = reader.readNext();
+            if (type == QXmlStreamReader::StartElement &&
+                    reader.namespaceUri() == QLatin1String("DAV:")) {
+                if (reader.name()==QLatin1String("response")) {
+                    Node *node = parseNode(reader);
+                    if(node) {
+                        /*
+                        if (isFirst) { //we need to skip the requested dir
+                            isFirst=false;
+                        } else {
+                        */
+                            files.append(node);
+                        /*
+                        }
+                        */
+                    }
+                }
+                /*
+                QString name = reader.name().toString();
+                qDebug()<<"the name is " <<name<< " and the url is "<< QUrl::fromEncoded(currentItem.toLatin1()).path();
+                if (name == QLatin1String("href")) {
+                    currentItem = reader.readElementText();
+                } else if (name == QLatin1String("prop") &&
+                           !currentItem.isEmpty()) {
+
+                    Node *node;
+                    QString pathName = QUrl::fromEncoded(currentItem.toLatin1()).path();
+                    if (pathName.endsWith("/"))
+                        pathName.chop(1);
+                    QStringList pathNameParts=pathName.split("/");
+                    QString fileName=pathNameParts.last();
+                    qDebug() << "the name is "<<name;
+                    if (name == QLatin1String("collection")) {
+
+                        node = new Node(Node::Dir,fileName,_node);
+                    } else {
+                        node = new Node(Node::File,fileName,_node);
+                    }
+                    if (!isFirst)
+                    files.append(node);
+
+                    isFirst=false;
+                    currentItem.clear();
+
+
+
+                }
+                */
+            }
+        }
+        emit fileListing(files);
     }
 }
 

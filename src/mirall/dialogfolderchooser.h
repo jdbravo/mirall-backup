@@ -1,5 +1,19 @@
-#ifndef DIALOGFOLDERCHOOSER_H
-#define DIALOGFOLDERCHOOSER_H
+/*
+ * Copyright (C) by Jose Bravo <jbravo@colombiahosting.com.co>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
+ */
+
+#ifndef MIRALL_DIALOGFOLDERCHOOSER_H
+#define MIRALL_DIALOGFOLDERCHOOSER_H
 
 #include <QDialog>
 #include <QFileSystemModel>
@@ -45,4 +59,4 @@ signals:
 
 } //namespace mirall
 
-#endif // DIALOGFOLDERCHOOSER_H
+#endif // MIRALL_DIALOGFOLDERCHOOSER_H

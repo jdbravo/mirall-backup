@@ -65,6 +65,7 @@ set(libsync_SRCS
     mirall/progressdispatcher.cpp
     mirall/mirallaccessmanager.cpp
     mirall/networkjobs.cpp
+    mirall/owncloudnode.cpp
     mirall/account.cpp
     mirall/quotainfo.cpp
     creds/dummycredentials.cpp
@@ -95,6 +96,7 @@ set(libsync_HEADERS
     mirall/progressdispatcher.h
     mirall/mirallaccessmanager.h
     mirall/networkjobs.h
+    mirall/owncloudnode.h
     mirall/account.h
     mirall/quotainfo.h
     creds/abstractcredentials.h
@@ -235,6 +237,7 @@ mirall/accountsettings.ui
 mirall/ignorelisteditor.ui
 mirall/protocolwidget.ui
 mirall/dialogfolderchooser.ui
+mirall/restorewidget.ui
 wizard/owncloudsetupnocredspage.ui
 wizard/owncloudhttpcredspage.ui
 wizard/owncloudwizardresultpage.ui
@@ -269,8 +272,10 @@ set(mirall_SRCS
     mirall/owncloudgui.cpp
     mirall/socketapi.cpp
     mirall/backupfilesystemmodel.cpp
+    mirall/owncloudfilesmodel.cpp
     mirall/structurechecker.cpp
     mirall/dialogfolderchooser.cpp
+    mirall/restorewidget.cpp
 )
 
 set(mirall_HEADERS
@@ -298,8 +303,10 @@ set(mirall_HEADERS
     mirall/owncloudgui.h
     mirall/socketapi.h
     mirall/backupfilesystemmodel.h
+    mirall/owncloudfilesmodel.h
     mirall/structurechecker.h
     mirall/dialogfolderchooser.h
+    mirall/restorewidget.h
 )
 
 if( UNIX AND NOT APPLE)

@@ -18,6 +18,7 @@
 #include <QStyledItemDelegate>
 
 #include "mirall/progressdispatcher.h"
+#include "mirall/restorewidget.h"
 
 class QStandardItemModel;
 class QListWidgetItem;
@@ -48,6 +49,7 @@ public slots:
     void slotSyncStateChange(const QString& alias);
     void slotRefreshResultList();
     void showActivityPage();
+    void slotWidgetChanged(int);
 
 protected:
     void reject();
@@ -58,6 +60,7 @@ private:
     AccountSettings *_accountSettings;
     QListWidgetItem *_accountItem;
     ProtocolWidget  *_protocolWidget;
+    RestoreWidget *_restoreWidget;
 
     int _protocolIdx;
 };

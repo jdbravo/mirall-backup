@@ -19,6 +19,11 @@
 #include <QObject>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QVector>
+#include <QXmlStreamReader>
+
+#include "owncloudfilesmodel.h"
+#include "owncloudnode.h"
 
 class QUrl;
 class QTimer;
@@ -114,6 +119,27 @@ signals:
 
 private slots:
     virtual void finished();
+};
+
+/**
+ * @brief The LsAllJob class
+ */
+class LsAllJob : public AbstractNetworkJob {
+    Q_OBJECT
+private:
+    Node *_node;
+public:
+    explicit LsAllJob(Account *account, Node *node, QObject *parent = 0);
+    Node* parseNode(QXmlStreamReader& xml);
+    void start();
+    bool _parentIgnored=false;
+
+signals:
+    void fileListing(QVector<Node *> items);
+
+private slots:
+    virtual void finished();
+
 };
 
 /**

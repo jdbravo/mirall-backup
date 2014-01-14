@@ -23,6 +23,7 @@
 #include "mirall/progressdispatcher.h"
 #include "mirall/owncloudgui.h"
 #include "mirall/protocolwidget.h"
+#include "mirall/restorewidget.h"
 
 #include <QLabel>
 #include <QStandardItemModel>
@@ -67,12 +68,23 @@ SettingsDialog::SettingsDialog(ownCloudGui *gui, QWidget *parent) :
     GeneralSettings *generalSettings = new GeneralSettings;
     _ui->stack->addWidget(generalSettings);
 
+
     QIcon networkIcon(QLatin1String(":/mirall/resources/network.png"));
     QListWidgetItem *network = new QListWidgetItem(networkIcon, tr("Network"), _ui->labelWidget);
     network->setSizeHint(QSize(0, 32));
     _ui->labelWidget->addItem(network);
     NetworkSettings *networkSettings = new NetworkSettings;
     _ui->stack->addWidget(networkSettings);
+
+    connect(_ui->stack,SIGNAL(currentChanged(int)),this,SLOT(slotWidgetChanged(int)));
+
+    QIcon restoreIcon(QLatin1String(":/mirall/resources/restore.png"));
+    QListWidgetItem *restore = new QListWidgetItem(restoreIcon, tr("Restore"), _ui->labelWidget);
+    restore->setSizeHint(QSize(0, 32));
+    _ui->labelWidget->addItem(restore);
+    _restoreWidget = new RestoreWidget;
+    _ui->stack->addWidget(_restoreWidget);
+
     connect(networkSettings, SIGNAL(proxySettingsChanged()), gui, SIGNAL(setupProxy()));
 
     FolderMan *folderMan = FolderMan::instance();
@@ -129,6 +141,13 @@ SettingsDialog::SettingsDialog(ownCloudGui *gui, QWidget *parent) :
 SettingsDialog::~SettingsDialog()
 {
     delete _ui;
+}
+
+void SettingsDialog::slotWidgetChanged(int widgetNumber) {
+    if (_ui->stack->currentWidget()==_restoreWidget) {
+        qDebug()<<"selected the restore widget";
+        _restoreWidget->loadFiles();
+    }
 }
 
 void SettingsDialog::addAccount(const QString &title, QWidget *widget)
