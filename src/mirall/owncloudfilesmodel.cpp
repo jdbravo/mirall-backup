@@ -2,6 +2,7 @@
 #include "owncloudnode.h"
 
 #include <QDebug>
+#include <QIcon>
 
 
 OwncloudFilesModel::OwncloudFilesModel(QObject *parent)
@@ -43,7 +44,7 @@ QModelIndex OwncloudFilesModel::index(int row, int column,
     if (!rootNode || row < 0 || column < 0)
         return QModelIndex();
     Node *parentNode = nodeFromIndex(parent);
-    Node *childNode = parentNode->children.value(row);
+    Node *childNode = parentNode->getChildrens()->value(row);
     if (!childNode)
         return QModelIndex();
     return createIndex(row, column, childNode);
@@ -65,7 +66,7 @@ int OwncloudFilesModel::rowCount(const QModelIndex &parent) const
     Node *parentNode = nodeFromIndex(parent);
     if (!parentNode)
         return 0;
-    return parentNode->children.count();
+    return parentNode->getChildrens()->count();
 }
 int OwncloudFilesModel::columnCount(const QModelIndex & /* parent */) const
 {
@@ -85,13 +86,13 @@ QModelIndex OwncloudFilesModel::parent(const QModelIndex &child) const
     if (!grandparentNode)
         return QModelIndex();
 
-    int row = grandparentNode->children.indexOf(parentNode);
+    int row = grandparentNode->getChildrens()->indexOf(parentNode);
     return createIndex(row, 0, parentNode);
 }
 
 QVariant OwncloudFilesModel::data(const QModelIndex &index, int role) const
 {
-    if (role != Qt::DisplayRole)
+    if (role != Qt::DisplayRole && role != Qt::DecorationRole && role != Qt::CheckStateRole)
         return QVariant();
 
     Node *node = nodeFromIndex(index);
@@ -99,17 +100,30 @@ QVariant OwncloudFilesModel::data(const QModelIndex &index, int role) const
     if (!node)
         return QVariant();
 
-    if (index.column() == 0) {
-        switch (node->getType()) {
-        case Node::Dir:
-             return tr("Dir");
-        case Node::File:
-            return tr("File");
-        default:
-            return tr("Other");
+    if (role == Qt::CheckStateRole)
+    {
+        if (index.column()==0) {
+        return checkedFiles.contains(index) ? Qt::Checked : Qt::Unchecked;
+        } else {
+            return QVariant();
         }
-    } else if (index.column() == 1) {
-        return node->getName();
+    } else if (role==Qt::DisplayRole) {
+
+        if (index.column() == 0) {
+
+            return node->getName();
+        } else if (index.column() == 1) {
+            return node->getLastModify().toString();
+        }
+    } else if (role==Qt::DecorationRole) {
+        if (index.column()==0) {
+             if (node->getType()==Node::Dir) {
+                 return QIcon(QLatin1String(":/mirall/resources/folder.png"));
+             } else {
+                 return QIcon(QLatin1String(":/mirall/resources/file.png"));
+             }
+        }
+
     }
     return QVariant();
 }
@@ -119,10 +133,11 @@ QVariant OwncloudFilesModel::headerData(int section,
 {
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
         if (section == 0) {
-            return tr("Type");
-        } else if (section == 1) {
             return tr("Name");
+        } else if (section == 1) {
+            return tr("Last Modify");
         }
+
     }
     return QVariant();
 }
@@ -131,21 +146,32 @@ bool OwncloudFilesModel:: insertNode ( const QModelIndex & index, Node *value) {
     emit layoutAboutToBeChanged();
     Node *item = nodeFromIndex(index);
     if (item) {
-        item->children.append(value);
+        item->getChildrens()->append(value);
         emit  layoutChanged();
         return true;
     }
     return false;
 }
 
-bool OwncloudFilesModel::setData ( const QModelIndex & index, Node* value, int role ) {
-    if (role != Qt::EditRole)
+bool OwncloudFilesModel::setData ( const QModelIndex & index, const QVariant &value, int role ) {
+    if (role != Qt::EditRole && role != Qt::CheckStateRole)
              return false;
 
+
+    if (role == Qt::CheckStateRole) {
+        if (value == Qt::Checked) checkedFiles.insert(index);
+                             else checkedFiles.remove(index);
+        emit dataChanged(index, index);
+        return true;
+    }
+
+
+
     Node *item = nodeFromIndex(index);
-    qDebug()<<"the item is" << item->getName() << "and the colum is " << index.column();
+    //qDebug()<<"the item is" << item->getName() << "and the colum is " << index.column();
 
     bool result = item->setData(index.column(), value);
+
 
     if (result)
      emit dataChanged(index, index);
@@ -153,3 +179,9 @@ bool OwncloudFilesModel::setData ( const QModelIndex & index, Node* value, int r
     return result;
 
 }
+
+Qt::ItemFlags OwncloudFilesModel::flags(const QModelIndex& index) const {
+    return QAbstractItemModel::flags(index) | Qt::ItemIsUserCheckable;
+}
+
+

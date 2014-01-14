@@ -3,25 +3,34 @@
 
 #include <QString>
 #include <QList>
+#include <QDateTime>
+#include <QVector>
 
-class Node
+class Node : public QObject
 {
+    Q_OBJECT
 public:
     enum Type { Dir, File };
-    Node(Type type, const QString &name = "", Node *_parent = 0);
+    Node(Type type, const QString &name, QDateTime lastModify, Node *_parent = 0);
     ~Node();
 
     Node *parent;
-    QList<Node *> children;
-    bool setData(int column, Node *value);
+
+    bool setData(int column, const QVariant &value);
     Node *child(int number);
     QString path();
     Node::Type getType( ) { return type; };
     QString getName() { return name; };
+    QDateTime getLastModify() { return lastModify; };
+    QList<Node*> *getChildrens() { return &childrens; };
+    QVariant data(int column) const;
+
 private:
     Type type;
     QString name;
-
+    QDateTime lastModify;
+    QList<Node*> childrens;
+    QVector<QVariant> itemData;
 };
 
 #endif //MIRALL_OWNCLOUDNODE_H

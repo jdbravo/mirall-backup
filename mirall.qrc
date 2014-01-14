@@ -15,5 +15,7 @@
         <file>resources/network.png</file>
         <file>resources/owncloud_logo_blue.png</file>
         <file>resources/restore.png</file>
+        <file>resources/file.png</file>
+        <file>resources/folder.png</file>
     </qresource>
 </RCC>

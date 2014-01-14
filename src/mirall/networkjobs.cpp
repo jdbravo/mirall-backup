@@ -25,6 +25,7 @@
 #include <QTimer>
 #include <QMutex>
 #include <QDebug>
+#include <QDateTime>
 
 #include "json.h"
 
@@ -319,6 +320,9 @@ void LsAllJob::start()
                    "  <d:prop>\n"
                    "    <d:resourcetype/>\n"
                    "  </d:prop>\n"
+                   "  <d:prop>\n"
+                   "    <d:getlastmodified/>\n"
+                   "  </d:prop>\n"
                    "</d:propfind>\n");
     QBuffer *buf = new QBuffer(this);
     buf->setData(xml);
@@ -331,6 +335,7 @@ void LsAllJob::start()
 }
 
 Node* LsAllJob::parseNode(QXmlStreamReader& xml) {
+
     if(xml.tokenType() != QXmlStreamReader::StartElement && xml.name() != "resource"){
         qDebug() << "Called XML parseNode without a Node in the XML stream!";
         return 0;
@@ -339,6 +344,9 @@ Node* LsAllJob::parseNode(QXmlStreamReader& xml) {
     qDebug()<<"reading xml of the node";
     QString path=0;
     bool isDir=false;
+    QDateTime lastModify=QDateTime::currentDateTime(); //Default
+
+    bool lastModifyObtained=false;
     xml.readNext();
     qDebug()<<"starting reading the response";
     while(true) {
@@ -350,6 +358,16 @@ Node* LsAllJob::parseNode(QXmlStreamReader& xml) {
         }
         if (xml.name()==QLatin1String("collection")&&!isDir) {
             isDir=true;
+        }
+        if (xml.name()==QLatin1String("getlastmodified")&&!lastModifyObtained) {
+            lastModifyObtained=true;
+
+            xml.readNext();
+            QString timeString = xml.text().toString();
+            timeString.chop(4);
+            lastModify=QDateTime::fromString(timeString,"ddd, dd MMM yyyy HH:mm:ss");
+            qDebug()<<"                the last modify is "<<lastModify.toString() << " and the string is "<< xml.text().toString();
+
         }
         xml.readNext();
         if (xml.name()==QLatin1String("response")) {
@@ -371,9 +389,10 @@ Node* LsAllJob::parseNode(QXmlStreamReader& xml) {
         }
         Node *node;
 
+
         if(_parentIgnored) {
-            node = new Node(typeT,fileName,_node);
-            _node->children.append(node);
+            node = new Node(typeT,fileName,lastModify,_node);
+            _node->getChildrens()->append(node);
         } else {
             _parentIgnored=true;
         }
@@ -382,8 +401,6 @@ Node* LsAllJob::parseNode(QXmlStreamReader& xml) {
         return node;
     }
     return 0;
-
-
 }
 
 void LsAllJob::finished()

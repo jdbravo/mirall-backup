@@ -1,26 +1,29 @@
 #include "owncloudnode.h"
+#include <QVariant>
 
-Node::Node(Type type, const QString &name, Node *_parent)
+Node::Node(Type type, const QString &name, QDateTime lastModify, Node *_parent)
 {
     this->type = type;
     this->name = name;
-    parent = _parent;
+    this->parent = _parent;
+    this->lastModify=lastModify;
+    this->itemData << tr("Name") << "Last Modify";
 }
 Node::~Node()
 {
-    qDeleteAll(children);
+    qDeleteAll(childrens);
 }
-bool Node::setData(int column, Node *value)
+bool Node::setData(int column, const QVariant &value)
  {
-     if (column < 0 || column >= children.size())
+     if (column < 0 || column >= itemData.size())
          return false;
 
-     children[column] = value;
+     itemData[column] = value;
      return true;
  }
 Node *Node::child(int number)
 {
-    return children.value(number);
+    return childrens.value(number);
 }
 QString Node::path() {
     QString path=name;
@@ -34,3 +37,8 @@ QString Node::path() {
         path="/"+path;
     return path;
 }
+QVariant Node::data(int column) const
+{
+    return itemData.value(column);
+}
+

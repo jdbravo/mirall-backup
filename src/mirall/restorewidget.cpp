@@ -36,9 +36,10 @@ RestoreWidget::RestoreWidget(QWidget *parent) :
 
 
     model = new OwncloudFilesModel();
-    Node *rootNode = new Node(Node::Dir, Account::backupPath()); //Invisible
-    model->setRootNode(rootNode);
 
+
+    //_ui->treeViewRemote->header()->setStretchLastSection(false);
+    _ui->treeViewRemote->header()->setResizeMode(QHeaderView::Stretch);
 
     connect(_ui->treeViewRemote,SIGNAL(pressed(QModelIndex)),this,SLOT(slotFilePressed(QModelIndex)));
 
@@ -57,7 +58,7 @@ void RestoreWidget::slotFilePressed(QModelIndex index) {
 
     Node *parentNode = model->getItem(index);
 
-    if (parentNode->getType()==Node::Dir&&parentNode->children.isEmpty()) {
+    if (parentNode->getType()==Node::Dir&&parentNode->getChildrens()->isEmpty()) {
         pI->startAnimation();
         model->prepareToAdd();
         LsAllJob *job = new LsAllJob(AccountManager::instance()->account(),parentNode,this);
@@ -76,7 +77,8 @@ void RestoreWidget::slotFilePressed(QModelIndex index) {
 
 void RestoreWidget::loadFiles() {
     pI->startAnimation();
-    Node *rootNode = model->getRootNode();
+    Node *rootNode = new Node(Node::Dir, Account::backupPath(),QDateTime::currentDateTime()); //Invisible
+    model->setRootNode(rootNode);
     LsAllJob *job = new LsAllJob(AccountManager::instance()->account(),rootNode,this);
     connect(job,SIGNAL(fileListing(QVector<Node*>)),this,SLOT(slotLoadRemoteFiles(QVector<Node*>)));
     job->start();
